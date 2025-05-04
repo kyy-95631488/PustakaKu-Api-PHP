@@ -23,6 +23,7 @@
     $password = $data['password'];
     $confirmPassword = $data['confirmPassword'];
 
+    // Check if email is already registered
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
@@ -43,7 +44,8 @@
     $hashedPassword = hash('sha512', $password . $salt);
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO users (name, email, password, salt) VALUES (?, ?, ?, ?)");
+        // Insert user data along with 'verified' set to 0 (unverified)
+        $stmt = $pdo->prepare("INSERT INTO users (name, email, password, salt, verified) VALUES (?, ?, ?, ?, 0)");
         $stmt->execute([$name, $email, $hashedPassword, $salt]);
 
         echo json_encode(["success" => true, "message" => "Registrasi berhasil."]);
